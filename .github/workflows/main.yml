@@ -1,25 +1,29 @@
 name: CI/CD Pipeline
-
 on:
   push:
     branches: [ "main" ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Compile Java
         run: javac HelloWorld.java
-
       - name: Run Java program
         run: java HelloWorld
+        
+  security-checks:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v4
+      - name: Gitleak installation
+        run: sudo apt install gitleaks -y
+      - name: Gitleak test
+        run: gitleaks detect source . -r report.json -f json
+        
